@@ -2,11 +2,19 @@
 #include <mutex>
 #include <thread>
 
+#define NUMTHREADS 4
+
 using namespace std;
 
 typedef struct MatThrArgs {
     int id;
     int numThreads;
+    double *A;
+	double *B;
+	double *C;
+	int N;
+    int i_start;
+	int i_stop;
 } MatThrArgs_t;
 
 void doBlockMMA(){}
@@ -19,6 +27,18 @@ void transpose (double *A, int N)
             t = A[i*N + j];
             A[i*N + j] = A[j*N + i];
             A[j*N + i] = t;
+        }
+    }
+}
+
+void matrix_multi(struct MatThrArgs *params){
+    for(int i=params->i_start; i<params->i_stop; i++) {
+        for(int j=0; j<params->N; j++) {
+            double tmp = 0;
+            for(int l=0; l<params->N; l++) {
+                tmp += params->A[params->N*i+l] * params->B[params->N*j+l];
+            }
+            params->C[params->N*i + j] = tmp;
         }
     }
 }
@@ -41,15 +61,26 @@ void matrix_mult_txpose(double *A, double *B, double *C, int N)
     // should work, easy to thread
     transpose(B, N);
 
-    for(int i=0; i<N; i++) {
-        for(int j=0; j<N; j++) {
-            double tmp = 0;
-            for(int l=0; l<N; l++) {
-                tmp += A[N*i+l] * B[N*j+l];
-            }
-            C[N*i + j] = tmp;
-        }
-    }
+    // matrix_multi(params);
+
+    struct MatThrArgs *params = new struct MatThrArgs[NUMTHREADS];
+
+    for (int i = 0; i < NUMTHREADS; i++)
+	{
+		params[i].i_start = i * (N/NUMTHREADS);
+		params[i].i_stop = (i + 1) * (N/NUMTHREADS);
+		params[i].A = A;
+		params[i].B = B;
+		params[i].C = C;
+		params[i].N = N;
+	}
+
+    thread t[NUMTHREADS];
+
+    for (int i = 0; i < NUMTHREADS; i++)
+	{
+		t[i] = thread(matrix_multi, &params[i]);
+	}
 
     // for (int i = 0; i < N; i++) {
     //     for (int j = 0; j < N; j++) {
@@ -124,6 +155,8 @@ int main () {
         B[i*N + i] = 2.0;
     }
 
+    B[1] = 1;
+
     cout << "A: " << endl;
     for (int i=0; i<N; i++) {
         for (int j=0; j<N; j++) {
@@ -142,7 +175,7 @@ int main () {
     }
     cout << endl;
 
-    matrix_mult(A, B, C, N);
+    matrix_mult_txpose(A, B, C, N);
 
     cout << "C: " << endl;
     for (int i=0; i<N; i++) {
