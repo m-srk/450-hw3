@@ -7,13 +7,13 @@ LIB = _hw3_part2
 LIB_DIR = abc123_hw3_part2
 
 %.o: %.cpp $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS) -I. -I./$(LIB_DIR)
+	$(CC) -c -o $@ $< $(CFLAGS) -I. -I./$(LIB_DIR) -lpthread
 
 $(EXEC): $(OBJ)
 	module load gcc; \
 	cd $(LIB_DIR) && $(MAKE);
 	module load gcc; \
-	$(CC) -o $@ $^ $(CFLAGS) -L./$(LIB_DIR)/ -l$(LIB) -L.
+	$(CC) -o $@ $^ $(CFLAGS) -L./$(LIB_DIR)/ -l$(LIB) -L. -lpthread
 
 .PHONY: clean
 clean:

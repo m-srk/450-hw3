@@ -3,9 +3,53 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <thread>
 #include "sd_thread.h"
 
 using namespace std;
+
+typedef struct thread_params {
+	int id;
+	int istart;
+	int istop;
+	double *A;
+	long N;
+	int numthrs;
+	double mean;
+	double sd;
+	double min;
+	double max;
+} tparams;
+
+void binWorker(tparams *tp) {
+	double *A = tp->A, mean = tp->mean;
+
+	for(long i = tp->istart; i < tp->istop; i += 1)
+	{
+		tp->sd += (A[i] - mean) * (A[i] - mean);
+		
+		if(tp->max < A[i])
+		{
+			tp->max = A[i];
+		}
+		
+		if(tp->min > A[i])
+		{
+			tp->min = A[i];
+		}
+	}
+}
+
+void meanWorker(tparams *tp) {
+	// perform the summation for the mean
+	long N = tp->N; double sum = 0;
+	for(long i = tp->istart; i < tp->istop; i += 1)
+	{
+		sum = sum + tp->A[i];
+	}
+
+	tp->mean = sum;
+}
 
 STDDEV_RESULT* calcSdThread(double *A, long N, int P)
 {
@@ -19,33 +63,65 @@ STDDEV_RESULT* calcSdThread(double *A, long N, int P)
     sd_temp = 0;
     mean = 0;
 
-	// perform the summation for the mean
-	for(long i = 0; i < N; i++)
-	{
-		mean = mean+A[i];
+	thread t[P];
+	tparams *tp = (tparams *) malloc(P * sizeof(tparams));
+	for (int i=0; i<P; i++) {
+		tp[i].A = A;
+		tp[i].N = N;
+		tp[i].istart = i*(N/P);
+		tp[i].istop = (i+1)*(N/P);
+		tp[i].numthrs = P;
+
+		t[i] = thread(meanWorker, &tp[i]);
+	}
+
+	for (int i=0; i<P; i++) {
+		t[i].join();
+	}
+
+	for (int i=0; i<P; i++) {
+		mean += tp[i].mean;
 	}
 
 	mean /= (double) N;
 
-	// perform the summation for the std_dev
-	for(long i = 0; i < N; i++)
-	{
-		sd_temp += (A[i] - mean) * (A[i] - mean);
-	}	
-	sd=sqrt(sd_temp/(double)N);
-	
+	for (int i=0; i<P; i++) {
+		tp[i].A = A;
+		tp[i].N = N;
+		tp[i].istart = i*(N/P);
+		tp[i].istop = (i+1)*(N/P);
+		tp[i].numthrs = P;
+		tp[i].mean = mean;
+		tp[i].sd = sd;
+		tp[i].min = min;
+		tp[i].max = max;
+
+		t[i] = thread(binWorker, &tp[i]);
+	}
+
+	for (int i=0; i<P; i++) {
+		t[i].join();
+	}
+
+	for (int i=0; i<P; i++) {
+		t[i].join();
+	}
+
 	// find min and max
-	for(long i = 0; i < N; i++)
+	for(long i = 0; i < P; i++)
 	{
-		if(max < A[i])
+		sd += tp[i].sd;
+		if(max < tp[i].max)
 		{
-			max = A[i];
+			max = tp[i].max;
 		}
-		if(min > A[i])
+		if(min > tp[i].min)
 		{
-			min = A[i];
+			min = tp[i].min;
 		}
 	}
+
+	sd=sqrt(sd/(double)N);
 	
 	// store off the values to return 
 	res->mean = mean;

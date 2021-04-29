@@ -52,7 +52,7 @@ void matrix_multi(struct MatThrArgs *params) {
             {
                 tmp += (params->A)[params->N*i+l] * (params->B)[params->N*j+l];
             }
-            // cout << "Thread: " << params->id << " , Computing C[" << i << "][" << j << "]" << endl;
+            cout << "Thread: " << params->id << " , Computing C[" << i << "][" << j << "]" << endl;
             (params->C)[params->N*i + j] = tmp;
         }
     }
@@ -66,7 +66,7 @@ void thrTxpose(struct MatThrArgs *params)
     
     for(int i = params->i_start; i < params->i_stop; i += params->step)
     {
-        // cout << "Thread : " << params->id << " , i = " << i << endl;
+        cout << "Thread : " << params->id << " , i = " << i << endl;
         for(int j = i+1; j < N; j++)
         {
             t = A[i*N + j];
@@ -92,7 +92,7 @@ void transposeThreaded(double *A, int N) {
 
     thread t[NUMTHREADS];
 
-    // cout << "[Txpose Threaded] Firing threads ->" << endl;
+    cout << "[Txpose Threaded] Firing threads ->" << endl;
 
     for (int i = 0; i < NUMTHREADS; i++) {
 		t[i] = thread(thrTxpose, &params[i]);
@@ -102,17 +102,19 @@ void transposeThreaded(double *A, int N) {
     	t[i].join();
     }
 
-    // cout << "[Txpose Threaded] Threads joined ->" << endl;
+    cout << "[Txpose Threaded] Threads joined ->" << endl;
 
     delete [] params;
 }
 
-// matrix_mult_opt_threaded
-void matrix_mult(double *A, double *B, double *C, int N)
+// transpose based MMA
+void matrix_mult_opt_threaded(double *A, double *B, double *C, int N)
 {
+    int row, col, i, j, k;
+	double sum;
 
     transposeThreaded(B, N);
-    // printMat(B, N, "Txpose(B):");
+    printMat(B, N, "Txpose(B):");
 
     // matrix_multi(params);
 
@@ -131,7 +133,7 @@ void matrix_mult(double *A, double *B, double *C, int N)
 
     thread t[NUMTHREADS];
 
-    // cout << "Firing threads ->" << endl;
+    cout << "Firing threads ->" << endl;
 
     for (int i = 0; i < NUMTHREADS; i++)
 	{
@@ -140,17 +142,18 @@ void matrix_mult(double *A, double *B, double *C, int N)
 
     for (int i = 0; i<NUMTHREADS; i++) {
     	t[i].join();
-    } 
+    }
+
+    cout << "Threads joined." << endl;    
 
     delete [] params;
 }
 
-// matrix_mult_opt
 void matrix_mult_opt(double *A, double *B, double *C, int N) {
 
-		// printMat(B, N, "Mat B:");
+		printMat(B, N, "Mat B:");
 		transpose(B, N);
-		// printMat(B, N, "Txpose(B):");
+		printMat(B, N, "Txpose(B):");
 
 		for(int i = 0; i <N; i++)
 		{
@@ -179,8 +182,10 @@ void naive_worker(MatThrArgs_t *params) {
 	}
 }
 
-// matrix_mult_naive_threaded
+// naive threaded MMA
 void matrix_mult_naive_threaded(double *A, double *B, double *C, int N) {
+	int row, col, i, j, k;
+	double sum;
 
     struct MatThrArgs *params = new struct MatThrArgs[NUMTHREADS];
 
@@ -213,7 +218,6 @@ void matrix_mult_naive_threaded(double *A, double *B, double *C, int N) {
     delete [] params;
 }
 
-// matrix_mult_naive
 void matrix_mult_naive(double *A, double *B, double *C, int N)
 {
 	for (int i = 0; i < N; i++)
@@ -225,4 +229,51 @@ void matrix_mult_naive(double *A, double *B, double *C, int N)
 				C[i * N + j] += A[i * N + k] * B[k * N + j];
 			}
 		}
+}
+
+int main () {
+
+    int N = 16;
+    double *A = new double[N*N];
+    double *B = new double[N*N];
+    double *C = new double[N*N];
+
+    for (int i=0; i<N; i++) {
+        for (int j=0; j<N; j++) {
+            A[i*N + j] = i;
+            B[i*N + j] = 0;
+        }
+        B[i*N + i] = 2.0;
+    }
+
+    B[1] = 1;
+
+    printMat(A, N, "A");
+    printMat(B, N, "B");
+
+    matrix_mult_opt_threaded(A, B, C, N);
+
+    printMat(C, N, "C");
+
+    transpose(B, N);
+
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            C[i*N + j] = 0;
+        }
+    }
+    
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            for (int k = 0; k < N; k++) {
+                C[i*N + j] += A[i*N + k] * B[k*N + j] ;
+            }
+        }
+    }
+
+    printMat(C, N, "serial comp. C:");
+
+    free(A); free(B); free(C);
+
+    return 0;
 }

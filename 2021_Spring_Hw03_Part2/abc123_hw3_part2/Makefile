@@ -5,7 +5,7 @@ OBJ = hw3_part2.o
 LIB = lib_hw3_part2.a
 
 %.o: %.cpp $(DEPS)
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $< -lpthread
 	
 $(LIB): $(OBJ)
 	ar rcs $@ $(OBJ)
