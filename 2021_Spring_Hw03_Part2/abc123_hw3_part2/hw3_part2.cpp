@@ -44,20 +44,22 @@ void matrix_mult(double *A, double *B, double *C, int N)
 
 	for (row = 0; row < N; row += b) 
 	{
+		cout << "row = " << row << endl;
 		for (col = 0; col < N; col += b) 
 		{
+			cout << "col = " << col << endl;
 			for (i = 0; i < N; i++) 
 			{
+				cout << "i = " << i << endl;
 				for (j = col; j < col+b; j++) 
 				{
+					printf("C[%d][%d] =\n", i, j);
 					sum = C[i*N + j];
-					for (k = row; k < row+b; k+=5)
+					for (k = row; k < row+b; k+=1)
 					{
+						cout << "k = " << k << endl;
+						printf("+ A[%d][%d] * B[%d][%d]\n", i, k, k, j);
 						sum += A[i*N + k] * B[k*N + j];
-						sum += A[i*N + k + 1] * B[(k+1)*N + j];
-						sum += A[i*N + k + 2] * B[(k+2)*N + j];
-						sum += A[i*N + k + 3] * B[(k+3)*N + j];
-						sum += A[i*N + k + 4] * B[(k+4)*N + j];
 					}
 					C[i*N + j] = sum;
 				}
@@ -65,6 +67,8 @@ void matrix_mult(double *A, double *B, double *C, int N)
 		}
 
 	}
+
+	free(A); free(B);
 
 }
 
