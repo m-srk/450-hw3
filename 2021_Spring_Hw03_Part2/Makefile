@@ -4,7 +4,7 @@ DEPS =
 OBJ = hw3_part2_test.o 
 EXEC = hw3_part2_test
 LIB = _hw3_part2
-LIB_DIR = abc123_hw3_part2
+LIB_DIR = sxm6373_hw3_part2
 
 %.o: %.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS) -I. -I./$(LIB_DIR) -lpthread

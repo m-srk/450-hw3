@@ -1,10 +1,10 @@
-CC=g++ -g
+CC=g++ 
 CFLAGS= -O3 -pthread
 DEPS =
 OBJ = main.o calcSd.o
 EXEC = sd_test
 LIB = _sd_thread
-LIB_DIR = abc123_threadSd
+LIB_DIR = sxm6373_hw3_part1
 
 %.o: %.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS) -I. -I./$(LIB_DIR)

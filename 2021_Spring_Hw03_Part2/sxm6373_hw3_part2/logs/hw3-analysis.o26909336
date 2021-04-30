@@ -1,0 +1,17 @@
+WARNING: No ICDs were found. Either,
+- Install a conda package providing a OpenCL implementation (pocl, oclgrind, intel-compute-runtime, beignet) or 
+- Make your system-wide implementation visible by installing ocl-icd-system conda package. 
+WARNING: No ICDs were found. Either,
+- Install a conda package providing a OpenCL implementation (pocl, oclgrind, intel-compute-runtime, beignet) or 
+- Make your system-wide implementation visible by installing ocl-icd-system conda package. 
+WARNING: No ICDs were found. Either,
+- Install a conda package providing a OpenCL implementation (pocl, oclgrind, intel-compute-runtime, beignet) or 
+- Make your system-wide implementation visible by installing ocl-icd-system conda package. 
+#-#-#Job started on comp-sc-0027.acib.production.int.aci.ics.psu.edu at Fri Apr 30 11:41:44 EDT 2021 
+This job runs on the following processors:
+comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027 comp-sc-0027
+Current directory is /storage/home/s/sxm6373
+Current directory is /storage/home/s/sxm6373/hw3/450-hw3/2021_Spring_Hw03_Part2/abc123_hw3_part2
+rm -f hw3_part2.o lib_hw3_part2.a
+#-#-#Compilation completed and execution started at Fri Apr 30 11:41:44 EDT 2021
+#-#-#Job Ended at Fri Apr 30 11:41:45 EDT 2021
