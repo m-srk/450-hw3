@@ -1,8 +1,9 @@
 #include <iostream>
 #include <mutex>
 #include <thread>
-
-#define NUMTHREADS 4
+#include <string.h>
+#include <stdlib.h>
+//#define NUMTHREADS 4
 
 using namespace std;
 
@@ -43,17 +44,21 @@ void transpose (double *A, int N)
 
 void matrix_multi(struct MatThrArgs *params) {
 
-    for(int i = params->i_start; i < params->i_stop; i++)
+    for(int i = params->i_start; i < params->i_stop; i+= 5)
     {
         for(int j = 0; j < params->N; j++)
         {
-            double tmp = 0;
+	    (params->C)[params->N*(i) + j] = (params->C)[params->N*(i+1) + j] = 0;
+	    (params->C)[params->N*(i+2) + j] = (params->C)[params->N*(i+3) + j] = (params->C)[params->N*(i+4) + j] = 0;
             for(int l=0; l < params->N; l++)
             {
-                tmp += (params->A)[params->N*i+l] * (params->B)[params->N*j+l];
+                (params->C)[params->N*i + j] += (params->A)[params->N*i+l] * (params->B)[params->N*j+l];
+                (params->C)[params->N*(i+1) + j] += (params->A)[params->N*(i+1)+l] * (params->B)[params->N*j+l];
+                (params->C)[params->N*(i+2) + j] += (params->A)[params->N*(i+2)+l] * (params->B)[params->N*j+l];
+                (params->C)[params->N*(i+3) + j] += (params->A)[params->N*(i+3)+l] * (params->B)[params->N*j+l];
+                (params->C)[params->N*(i+4) + j] += (params->A)[params->N*(i+4)+l] * (params->B)[params->N*j+l];
             }
             // cout << "Thread: " << params->id << " , Computing C[" << i << "][" << j << "]" << endl;
-            (params->C)[params->N*i + j] = tmp;
         }
     }
 }
@@ -78,7 +83,9 @@ void thrTxpose(struct MatThrArgs *params)
 
 void transposeThreaded(double *A, int N) {
 
-    struct MatThrArgs *params = new struct MatThrArgs[NUMTHREADS];
+    int NUMTHREADS = atoi( getenv("NUMTHREADS") );
+    cout << NUMTHREADS	<< endl;
+	struct MatThrArgs *params = new struct MatThrArgs[NUMTHREADS];
 
     for (int i = 0; i < NUMTHREADS; i++)
 	{
@@ -114,7 +121,7 @@ void matrix_mult(double *A, double *B, double *C, int N)
     transposeThreaded(B, N);
     // printMat(B, N, "Txpose(B):");
 
-    // matrix_multi(params);
+    int NUMTHREADS = atoi( getenv("NUMTHREADS") );
 
     struct MatThrArgs *params = new struct MatThrArgs[NUMTHREADS];
 
@@ -123,7 +130,7 @@ void matrix_mult(double *A, double *B, double *C, int N)
 		params[i].i_start = i * (N/NUMTHREADS);
 		params[i].i_stop = (i + 1) * (N/NUMTHREADS);
 		params[i].id = i;
-        params[i].A = A;
+        	params[i].A = A;
 		params[i].B = B;
 		params[i].C = C;
 		params[i].N = N;
@@ -152,15 +159,15 @@ void matrix_mult_opt(double *A, double *B, double *C, int N) {
 		transpose(B, N);
 		// printMat(B, N, "Txpose(B):");
 
-		for(int i = 0; i <N; i++)
+		for(int i = 0; i <N; i+= 2)
 		{
 			for(int j = 0; j < N; j++)
 			{
-				double tmp = 0;
+				C[N*i + j] = C[N*(i+1) + j] = 0;
 				for(int l=0; l < N; l++) {
-					tmp += A[N*i+l] * B[N*j+l];
+					C[N*i + j] += A[N*i+l] * B[N*j+l];
+					C[N*(i+1) + j] += A[N*(i+1)+l] * B[N*j+l];
 				}
-				C[N*i + j] = tmp;
 			}
 		}
 }
@@ -182,6 +189,8 @@ void naive_worker(MatThrArgs_t *params) {
 // matrix_mult_naive_threaded
 void matrix_mult_naive_threaded(double *A, double *B, double *C, int N) {
 
+    int NUMTHREADS = atoi( getenv("NUMTHREADS") );
+    cout << "Running with: " << NUMTHREADS << " threads." << endl;
     struct MatThrArgs *params = new struct MatThrArgs[NUMTHREADS];
 
     for (int i = 0; i < NUMTHREADS; i++)
