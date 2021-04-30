@@ -85,6 +85,7 @@ STDDEV_RESULT* calcSdThread(double *A, long N, int P)
 
 	mean /= (double) N;
 
+	thread newt[P];
 	for (int i=0; i<P; i++) {
 		tp[i].A = A;
 		tp[i].N = N;
@@ -96,15 +97,11 @@ STDDEV_RESULT* calcSdThread(double *A, long N, int P)
 		tp[i].min = min;
 		tp[i].max = max;
 
-		t[i] = thread(binWorker, &tp[i]);
+		newt[i] = thread(binWorker, &tp[i]);
 	}
 
 	for (int i=0; i<P; i++) {
-		t[i].join();
-	}
-
-	for (int i=0; i<P; i++) {
-		t[i].join();
+		newt[i].join();
 	}
 
 	// find min and max

@@ -1,4 +1,4 @@
-CC=g++
+CC=g++ -g
 CFLAGS= -O3 -pthread
 DEPS =
 OBJ = main.o calcSd.o

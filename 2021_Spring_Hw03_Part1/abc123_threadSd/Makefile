@@ -1,4 +1,4 @@
-CC=g++
+CC=g++ -g
 CFLAGS= -I. -O3
 DEPS = sd_thread.h
 OBJ = sd_thread.o
