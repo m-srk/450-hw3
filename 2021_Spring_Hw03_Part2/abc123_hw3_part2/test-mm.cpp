@@ -124,7 +124,6 @@ void transposeThreaded(double *A, int N) {
 // matrix_mult_opt_threaded
 void matrix_mult(double *A, double *B, double *C, int N)
 {
-
     transposeThreaded(B, N);
     // printMat(B, N, "Txpose(B):");
 
@@ -159,90 +158,6 @@ void matrix_mult(double *A, double *B, double *C, int N)
     delete [] params;
 }
 
-// matrix_mult_opt
-void matrix_mult_opt(double *A, double *B, double *C, int N) {
-
-		// printMat(B, N, "Mat B:");
-		transpose(B, N);
-		// printMat(B, N, "Txpose(B):");
-
-		for(int i = 0; i <N; i+= 2)
-		{
-			for(int j = 0; j < N; j++)
-			{
-				C[N*i + j] = C[N*(i+1) + j] = 0;
-				for(int l=0; l < N; l++) {
-					C[N*i + j] += A[N*i+l] * B[N*j+l];
-					C[N*(i+1) + j] += A[N*(i+1)+l] * B[N*j+l];
-				}
-			}
-		}
-}
-
-void naive_worker(MatThrArgs_t *params) {
-	double *A = params->A, *B = params->B, *C = params->C;
-	int N = params->N;
-
-	for (int i = params->i_start; i < params->i_stop; i++) {
-		for (int j = 0; j < N; j++) {
-			C[i*N + j] = 0.0;
-			for (int k = 0; k < N; k++) {
-				C[i*N + j] += A[i*N + k] * B[k*N + j]; 
-			}
-		}
-	}
-}
-
-// matrix_mult_naive_threaded
-void matrix_mult_naive_threaded(double *A, double *B, double *C, int N) {
-
-    int NUMTHREADS = atoi( getenv("NUMTHREADS") );
-    cout << "Running with: " << NUMTHREADS << " threads." << endl;
-    struct MatThrArgs *params = new struct MatThrArgs[NUMTHREADS];
-
-    for (int i = 0; i < NUMTHREADS; i++)
-	{
-		params[i].i_start = i * (N/NUMTHREADS);
-		params[i].i_stop = (i + 1) * (N/NUMTHREADS);
-		params[i].id = i;
-        params[i].A = A;
-		params[i].B = B;
-		params[i].C = C;
-		params[i].N = N;
-	}
-
-    thread t[NUMTHREADS];
-
-    cout << "Firing threads ->" << endl;
-
-    for (int i = 0; i < NUMTHREADS; i++)
-	{
-		t[i] = thread(naive_worker, &params[i]);
-	}
-
-    for (int i = 0; i<NUMTHREADS; i++) {
-    	t[i].join();
-    }
-
-    cout << "Threads joined." << endl;    
-
-    delete [] params;
-}
-
-// matrix_mult_naive
-void matrix_mult_naive(double *A, double *B, double *C, int N)
-{
-	for (int i = 0; i < N; i++)
-		for (int j = 0; j < N; j++)
-		{
-			C[i * N + j] = 0;
-			for (int k = 0; k < N; k++)
-			{
-				C[i * N + j] += A[i * N + k] * B[k * N + j];
-			}
-		}
-}
-
 int main () {
 
     int N = atoi( getenv("MATDIM") );
@@ -263,7 +178,7 @@ int main () {
     double st, end;
 
     get_walltime(&st);
-	matrix_mult_opt_threaded(A, B, C, N);
+	matrix_mult(A, B, C, N);
 	get_walltime(&end);
 	cout << "N = " << N << ", P = " << getenv("NUMTHREADS") << ", time taken: " << (end-st);
 
