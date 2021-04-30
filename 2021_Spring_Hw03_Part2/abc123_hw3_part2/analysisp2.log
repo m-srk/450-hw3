@@ -1,0 +1,175 @@
+
+\n starting opt + threaded analysis:
+Mat dim = 36
+1
+N = 36, P = 1
+1
+Time taken: 0.000274897
+2
+N = 36, P = 2
+2
+Time taken: 0.000271797
+4
+N = 36, P = 4
+4
+Time taken: 0.000347137
+6
+N = 36, P = 6
+6
+Time taken: 0.000463963
+9
+N = 36, P = 9
+9
+Time taken: 0.000576019
+10
+N = 36, P = 10
+10
+Time taken: 0.000699997
+12
+N = 36, P = 12
+12
+Time taken: 0.000720024
+18
+N = 36, P = 18
+18
+Time taken: 0.00103903
+20
+N = 36, P = 20
+20
+Time taken: 0.00127697
+\n starting opt + threaded analysis:
+Mat dim = 100
+1
+N = 100, P = 1
+1
+Time taken: 0.000799179
+2
+N = 100, P = 2
+2
+Time taken: 0.000454903
+4
+N = 100, P = 4
+4
+Time taken: 0.00049901
+8
+N = 100, P = 8
+8
+Time taken: 0.000595093
+10
+N = 100, P = 10
+10
+Time taken: 0.000703096
+12
+N = 100, P = 12
+12
+Time taken: 0.000801086
+16
+N = 100, P = 16
+16
+Time taken: 0.00101209
+20
+N = 100, P = 20
+20
+Time taken: 0.00118518
+\n starting opt + threaded analysis:
+Mat dim = 100
+1
+N = 100, P = 1
+1
+Time taken: 0.000838041
+2
+N = 100, P = 2
+2
+Time taken: 0.000556946
+4
+N = 100, P = 4
+4
+Time taken: 0.000467062
+8
+N = 100, P = 8
+8
+Time taken: 0.000579119
+10
+N = 100, P = 10
+10
+Time taken: 0.00069499
+12
+N = 100, P = 12
+12
+Time taken: 0.00077796
+16
+N = 100, P = 16
+16
+Time taken: 0.000982046
+20
+N = 100, P = 20
+20
+Time taken: 0.00109816
+\n starting opt + threaded analysis:
+Mat dim = 800
+1
+N = 800, P = 1
+1
+Time taken: 0.221933
+2
+N = 800, P = 2
+2
+Time taken: 0.111221
+4
+N = 800, P = 4
+4
+Time taken: 0.0603759
+8
+N = 800, P = 8
+8
+Time taken: 0.033911
+10
+N = 800, P = 10
+10
+Time taken: 0.027549
+12
+N = 800, P = 12
+12
+Time taken: 0.0232689
+16
+N = 800, P = 16
+16
+Time taken: 0.0176411
+20
+N = 800, P = 20
+20
+Time taken: 0.022608
+\n starting opt + threaded analysis:
+Mat dim = 2000
+1
+N = 2000, P = 1
+1
+Time taken: 3.83886
+2
+N = 2000, P = 2
+2
+Time taken: 1.88486
+4
+N = 2000, P = 4
+4
+Time taken: 0.979719
+8
+N = 2000, P = 8
+8
+Time taken: 0.535879
+10
+N = 2000, P = 10
+10
+Time taken: 0.442571
+12
+N = 2000, P = 12
+12
+Time taken: 0.38608
+16
+N = 2000, P = 16
+16
+Time taken: 0.292505
+20
+N = 2000, P = 20
+20
+Time taken: 0.245002

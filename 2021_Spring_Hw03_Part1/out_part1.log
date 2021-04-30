@@ -1,0 +1,79 @@
+
+1
+N is set to: 1000000000
+P is set to: 10
+T is set to: 999.00000
+Checking correctness of the Program 
+Min: 0.000002, 0.000002, Check passed 
+Max: 999.999997, 999.999997, Check passed 
+Mean: 499.990008, 499.990008, Check failed 
+Standard Deviation: 288.675792367, 288.675792366, Check failed
+STD_DEV Wall times: OMP: 0.438666, Serial: 2.830306
+Checking correctness of Thresholding 
+Threshold Count: 999316, 999316, Check passed
+THRESH Wall times: OMP: 0.376650, Serial: 1.433294
+2
+N is set to: 1000000000
+P is set to: 10
+T is set to: 999.00000
+Checking correctness of the Program 
+Min: 0.000003, 0.000003, Check passed 
+Max: 999.999999, 999.999999, Check passed 
+Mean: 499.991814, 499.991814, Check failed 
+Standard Deviation: 288.672877068, 288.672877068, Check failed
+STD_DEV Wall times: OMP: 0.458963, Serial: 2.818926
+Checking correctness of Thresholding 
+Threshold Count: 1000918, 1000918, Check passed
+THRESH Wall times: OMP: 0.433761, Serial: 1.386766
+3
+N is set to: 1000000000
+P is set to: 10
+T is set to: 999.00000
+Checking correctness of the Program 
+Min: 0.000000, 0.000000, Check passed 
+Max: 1000.000000, 1000.000000, Check passed 
+Mean: 499.998339, 499.998339, Check failed 
+Standard Deviation: 288.669491096, 288.669491095, Check failed
+STD_DEV Wall times: OMP: 0.451848, Serial: 2.818133
+Checking correctness of Thresholding 
+Threshold Count: 999590, 999590, Check passed
+THRESH Wall times: OMP: 0.462162, Serial: 1.465795
+1
+N is set to: 1000000000
+P is set to: 10
+T is set to: 999.00000
+Checking correctness of the Program 
+Min: 0.000000, 0.000000, Check passed 
+Max: 1000.000000, 1000.000000, Check passed 
+Mean: 500.009318, 500.009318, Check failed 
+Standard Deviation: 288.674873227, 288.674873227, Check failed
+STD_DEV Wall times: OMP: 0.445010, Serial: 2.817142
+Checking correctness of Thresholding 
+Threshold Count: 998181, 998181, Check passed
+THRESH Wall times: OMP: 0.411919, Serial: 1.464186
+2
+N is set to: 1000000000
+P is set to: 10
+T is set to: 999.00000
+Checking correctness of the Program 
+Min: 0.000000, 0.000000, Check passed 
+Max: 1000.000000, 1000.000000, Check passed 
+Mean: 500.008743, 500.008743, Check failed 
+Standard Deviation: 288.677614383, 288.677614383, Check failed
+STD_DEV Wall times: OMP: 0.455202, Serial: 2.817717
+Checking correctness of Thresholding 
+Threshold Count: 999782, 999782, Check passed
+THRESH Wall times: OMP: 0.355506, Serial: 1.470335
+3
+N is set to: 1000000000
+P is set to: 10
+T is set to: 999.00000
+Checking correctness of the Program 
+Min: 0.000000, 0.000000, Check passed 
+Max: 1000.000000, 1000.000000, Check passed 
+Mean: 500.000773, 500.000773, Check failed 
+Standard Deviation: 288.675466857, 288.675466858, Check failed
+STD_DEV Wall times: OMP: 0.387807, Serial: 3.288342
+Checking correctness of Thresholding 
+Threshold Count: 1000794, 1000794, Check passed
+THRESH Wall times: OMP: 0.323471, Serial: 1.695053
