@@ -10,15 +10,25 @@ using namespace std;
 
 typedef struct thread_params {
 	int id;
-	int istart;
-	int istop;
+	long istart;
+	long istop;
 	double *A;
 	long N;
 	int numthrs;
+	
+	// p1
 	double mean;
 	double sd;
 	double min;
 	double max;
+
+	// p2
+	double T;
+	long c;
+	long cstart;
+	long cend;
+	THRESH_RESULT * threshRes;
+
 } tparams;
 
 void binWorker(tparams *tp) {
@@ -126,33 +136,84 @@ STDDEV_RESULT* calcSdThread(double *A, long N, int P)
 	res->max = max;
 	res->stddev = sd;
 	
+	delete [] tp;
+
     return res;
+}
+
+void indexRecWorker(tparams *tp) {
+	long c = tp->cstart;
+	for (long i = tp->istart; i < tp->istop; i++){
+		if ( (tp->A[i] > tp->T) && (c < tp->cend) ) {
+			tp->threshRes->pli_list[c] = i;
+			c++;
+		}
+	}
+}
+
+void countWorker(tparams *tp) {
+	for (long i = tp->istart; i < tp->istop; i++)
+	{
+		if (tp->A[i] > tp->T)
+			tp->c += 1;
+	}
 }
 
 THRESH_RESULT *findThreshValuesThread(double *A, long N, double T, int P)
 {
 	THRESH_RESULT *p_tmpResult = new THRESH_RESULT;
 	
-	// traverse the list once to find the count of values over threshold
+	thread t[P];
+	tparams *tp = (tparams *) malloc(P * sizeof(tparams));
+	for (int i=0; i<P; i++) {
+		tp[i].A = A;
+		tp[i].N = N;
+		tp[i].c = 0;
+		tp[i].T = T;
+		tp[i].istart = i*(N/P);
+		tp[i].istop = (i+1)*(N/P);
+		tp[i].numthrs = P;
+
+		t[i] = thread(countWorker, &tp[i]);
+	}
+
+	for (int i=0; i<P; i++) {
+		t[i].join();
+	}
+
 	long c = 0;
-	for (long i=0; i < N; i++)
-	{
-		if (A[i] > T)
-			c++;
+	for (int i=0; i<P; i++) {
+		c += tp[i].c;
 	}
 	
 	// store the count and allocate an array to store the results
 	p_tmpResult->li_threshCount = c;
 	p_tmpResult->pli_list = new long[c];
 	c = 0;
-	
-	// store the index locations of the values over threshold
-	for (long i=0; i < N; i++){
-		if (A[i] > T){
-			p_tmpResult->pli_list[c] = i;
-			c++;
-		}
+
+	thread newt[P];
+	long offs = 0;
+	for (int i=0; i<P; i++) {
+		tp[i].A = A;
+		tp[i].N = N;
+		tp[i].T = T;
+		
+		tp[i].cstart = offs;
+		tp[i].cend = offs + tp[i].c;
+		offs = tp[i].cend;
+		tp[i].threshRes = p_tmpResult;
+
+		tp[i].istart = i*(N/P);
+		tp[i].istop = (i+1)*(N/P);
+		tp[i].numthrs = P;
+
+		newt[i] = thread(indexRecWorker, &tp[i]);
+	}
+
+	for (int i=0; i<P; i++) {
+		newt[i].join();
 	}
 	
+	delete [] tp;
 	return p_tmpResult;
 }
