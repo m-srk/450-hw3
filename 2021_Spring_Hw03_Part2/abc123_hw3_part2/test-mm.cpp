@@ -51,19 +51,20 @@ void transpose (double *A, int N)
 
 void matrix_multi(struct MatThrArgs *params) {
 
-    for(int i = params->i_start; i < params->i_stop; i+= 5)
+    for(int i = params->i_start; i < params->i_stop; i+= 2)
     {
         for(int j = 0; j < params->N; j++)
         {
-	    (params->C)[params->N*(i) + j] = (params->C)[params->N*(i+1) + j] = 0;
-	    (params->C)[params->N*(i+2) + j] = (params->C)[params->N*(i+3) + j] = (params->C)[params->N*(i+4) + j] = 0;
+	    (params->C)[params->N*(i) + j] = 0;
+		//(params->C)[params->N*(i+1) + j] = 0;
+	    //(params->C)[params->N*(i+2) + j] = (params->C)[params->N*(i+3) + j] = (params->C)[params->N*(i+4) + j] = 0;
             for(int l=0; l < params->N; l++)
             {
                 (params->C)[params->N*i + j] += (params->A)[params->N*i+l] * (params->B)[params->N*j+l];
-                (params->C)[params->N*(i+1) + j] += (params->A)[params->N*(i+1)+l] * (params->B)[params->N*j+l];
-                (params->C)[params->N*(i+2) + j] += (params->A)[params->N*(i+2)+l] * (params->B)[params->N*j+l];
-                (params->C)[params->N*(i+3) + j] += (params->A)[params->N*(i+3)+l] * (params->B)[params->N*j+l];
-                (params->C)[params->N*(i+4) + j] += (params->A)[params->N*(i+4)+l] * (params->B)[params->N*j+l];
+                //(params->C)[params->N*(i+1) + j] += (params->A)[params->N*(i+1)+l] * (params->B)[params->N*j+l];
+                //(params->C)[params->N*(i+2) + j] += (params->A)[params->N*(i+2)+l] * (params->B)[params->N*j+l];
+                //(params->C)[params->N*(i+3) + j] += (params->A)[params->N*(i+3)+l] * (params->B)[params->N*j+l];
+                //(params->C)[params->N*(i+4) + j] += (params->A)[params->N*(i+4)+l] * (params->B)[params->N*j+l];
             }
             // cout << "Thread: " << params->id << " , Computing C[" << i << "][" << j << "]" << endl;
         }
@@ -130,7 +131,7 @@ void matrix_mult(double *A, double *B, double *C, int N)
     int NUMTHREADS = atoi( getenv("NUMTHREADS") );
 
     struct MatThrArgs *params = new struct MatThrArgs[NUMTHREADS];
-
+	
     for (int i = 0; i < NUMTHREADS; i++)
 	{
 		params[i].i_start = i * (N/NUMTHREADS);
@@ -177,10 +178,11 @@ int main () {
     // printMat(B, N, "B");
     double st, end;
 
-    get_walltime(&st);
+	get_walltime(&st);
+	cout << "N = " << N << ", P = " << getenv("NUMTHREADS") << endl;
 	matrix_mult(A, B, C, N);
 	get_walltime(&end);
-	cout << "N = " << N << ", P = " << getenv("NUMTHREADS") << ", time taken: " << (end-st);
+	cout <<  "Time taken: " << (end-st) << endl;
 
     // printMat(C, N, "C");
 
